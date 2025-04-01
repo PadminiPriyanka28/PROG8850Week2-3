@@ -1,0 +1,27 @@
+- name: Setup MySQL and Apply Migrations
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Install MySQL
+      apt:
+        name: mysql-server
+        state: present
+
+    - name: Start MySQL Service
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+
+    - name: Create Database
+      mysql_db:
+        name: subscribers
+        state: present
+        login_user: root
+        login_password: password
+        login_host: localhost
+
+    - name: Run Flyway Migrations
+      command: /usr/local/flyway/flyway migrate -url=jdbc:mysql://localhost/subscribers -user=root -password=password
+
+
